@@ -16,3 +16,22 @@ class TicketState(TypedDict):
     guard_tokens: Optional[dict]
     classification_tokens: Optional[dict]
     total_cost: float
+
+
+def build_initial_state(ticket_text: str) -> TicketState:
+    return {
+        "original_text": ticket_text,
+        "redacted_text": "",
+        "injection_detected": False,
+        "issue_category": None,
+        "assigned_team": None,
+        "priority": None,
+        "user_sentiment": None,
+        "confidence_score": None,
+        "reasoning": None,
+        "requires_human_review": False,
+        "error": None,
+        "guard_tokens": None,
+        "classification_tokens": None,
+        "total_cost": 0.0,
+    }

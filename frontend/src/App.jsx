@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 const PRESETS = {
@@ -20,6 +20,16 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [history, setHistory] = useState([]);
+
+  async function fetchHistory() {
+    try {
+      const res = await fetch("http://localhost:8000/api/history");
+      if (res.ok) setHistory(await res.json());
+    } catch (_) {}
+  }
+
+  useEffect(() => { fetchHistory(); }, []);
 
   async function classify() {
     if (!text.trim()) return;
@@ -33,6 +43,7 @@ export default function App() {
       });
       if (!res.ok) throw new Error(`Server error ${res.status}`);
       setResult(await res.json());
+      fetchHistory();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -134,6 +145,19 @@ export default function App() {
           </div>
         )}
       </div>
+      {history.length > 0 && (
+        <div className="history">
+          <p className="history-title">Past Classifications</p>
+          {history.map((h) => (
+            <div key={h.id} className="history-row">
+              <span className="history-preview">{h.preview}</span>
+              <span className="history-meta">{h.issue_category ?? "—"}</span>
+              <span className={`badge ${PRIORITY_CLASS[h.priority] ?? "badge-gray"}`}>{h.priority ?? "—"}</span>
+              <span className="history-meta">{h.confidence_score != null ? `${Math.round(h.confidence_score * 100)}%` : "—"}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
