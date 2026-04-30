@@ -1,0 +1,285 @@
+/* ── Layout ── */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: 100vh;
+}
+
+.panel {
+  padding: 48px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.panel:first-child {
+  border-right: 1px solid var(--border);
+}
+
+/* ── Left panel ── */
+.panel-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--foreground);
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.presets-label {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted-foreground);
+}
+
+.presets {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.preset-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.preset-btn {
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: calc(var(--radius) * 0.8);
+  border: 1px solid var(--border);
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.preset-btn:hover {
+  background: var(--muted);
+  border-color: var(--ring);
+}
+
+.ticket-textarea {
+  width: 100%;
+  min-height: 220px;
+  resize: vertical;
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  border: 1px solid var(--input);
+  border-radius: var(--radius);
+  background: var(--background);
+  color: var(--foreground);
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+
+.ticket-textarea:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 20%, transparent);
+}
+
+.ticket-textarea::placeholder {
+  color: var(--muted-foreground);
+}
+
+.classify-btn {
+  padding: 11px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: var(--radius);
+  border: none;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  cursor: pointer;
+  transition: opacity 0.15s;
+  align-self: flex-start;
+}
+
+.classify-btn:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+.classify-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.error-msg {
+  font-size: 13px;
+  color: var(--destructive);
+  margin: 0;
+}
+
+/* ── Right panel ── */
+.result-panel {
+  background: var(--card);
+}
+
+.empty-hint {
+  margin: auto;
+  color: var(--muted-foreground);
+  font-size: 14px;
+  text-align: center;
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Banners */
+.banner {
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.banner--danger {
+  background: color-mix(in oklab, var(--destructive) 12%, transparent);
+  color: var(--destructive);
+  border: 1px solid color-mix(in oklab, var(--destructive) 30%, transparent);
+}
+
+.banner--warning {
+  background: color-mix(in oklab, #f59e0b 12%, transparent);
+  color: #b45309;
+  border: 1px solid color-mix(in oklab, #f59e0b 35%, transparent);
+}
+
+/* Rows */
+.result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.result-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.row-label {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted-foreground);
+}
+
+.row-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--foreground);
+}
+
+/* Badges */
+.badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.03em;
+}
+
+.badge-red {
+  background: color-mix(in oklab, #ef4444 15%, transparent);
+  color: #b91c1c;
+  border: 1px solid color-mix(in oklab, #ef4444 30%, transparent);
+}
+
+.badge-yellow {
+  background: color-mix(in oklab, #f59e0b 15%, transparent);
+  color: #92400e;
+  border: 1px solid color-mix(in oklab, #f59e0b 30%, transparent);
+}
+
+.badge-green {
+  background: color-mix(in oklab, #22c55e 15%, transparent);
+  color: #15803d;
+  border: 1px solid color-mix(in oklab, #22c55e 30%, transparent);
+}
+
+.badge-gray {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
+}
+
+/* Confidence bar */
+.row-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.confidence-pct {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.bar-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--muted);
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary);
+  transition: width 0.4s ease;
+}
+
+/* Redacted text */
+.redacted-text {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--foreground);
+  background: color-mix(in oklab, #f59e0b 8%, transparent);
+  border: 1px solid color-mix(in oklab, #f59e0b 25%, transparent);
+  border-radius: calc(var(--radius) * 0.6);
+  padding: 10px 12px;
+  margin: 0;
+  font-family: ui-monospace, monospace;
+  word-break: break-word;
+}
+
+/* Reasoning */
+.reasoning {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .panel:first-child {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .panel {
+    padding: 32px 20px;
+  }
+}
