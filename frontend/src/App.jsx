@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import "./App.css";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Textarea } from "@/components/ui/textarea";
 
 const PRESETS = {
   "Delayed Delivery":
@@ -12,8 +17,18 @@ const PRESETS = {
     "Hi, I'm John. My email is john.doe@example.com and my phone is 555-867-5309. I was charged $99 on my card 4111 1111 1111 1111 without authorization. Please help!",
 };
 
-const PRIORITY_CLASS = { high: "badge-red", medium: "badge-yellow", low: "badge-green" };
-const SENTIMENT_CLASS = { angry: "badge-red", frustrated: "badge-yellow", neutral: "badge-gray", happy: "badge-green" };
+const PRIORITY_STYLE = {
+  high: "border-red-300 bg-red-100 text-red-700",
+  medium: "border-amber-300 bg-amber-100 text-amber-700",
+  low: "border-emerald-300 bg-emerald-100 text-emerald-700",
+};
+
+const SENTIMENT_STYLE = {
+  angry: "border-red-300 bg-red-100 text-red-700",
+  frustrated: "border-orange-300 bg-orange-100 text-orange-700",
+  neutral: "border-sky-300 bg-sky-100 text-sky-700",
+  happy: "border-emerald-300 bg-emerald-100 text-emerald-700",
+};
 
 export default function App() {
   const [text, setText] = useState("");
@@ -52,121 +67,211 @@ export default function App() {
   }
 
   return (
-    <div className="layout">
-      {/* ── Left panel ── */}
-      <div className="panel">
-        <h1 className="panel-title">Support Ticket Classifier</h1>
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50">
+      <header className="bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-5 shadow-lg">
+        <h1 className="text-2xl font-bold tracking-tight text-white">
+          Support Ticket Classifier
+        </h1>
+        <p className="mt-0.5 text-sm text-violet-200">
+          AI-powered issue routing &amp; prioritization
+        </p>
+      </header>
 
-        <div className="presets">
-          <span className="presets-label">Try a preset</span>
-          <div className="preset-row">
-            {Object.entries(PRESETS).map(([label, sample]) => (
-              <button key={label} className="preset-btn" onClick={() => setText(sample)}>
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <textarea
-          className="ticket-textarea"
-          placeholder="Describe the issue…"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-
-        <button className="classify-btn" onClick={classify} disabled={loading || !text.trim()}>
-          {loading ? "Classifying…" : "Classify Ticket"}
-        </button>
-
-        {error && <p className="error-msg">{error}</p>}
-      </div>
-
-      {/* ── Right panel ── */}
-      <div className={`panel result-panel ${result ? "result-panel--visible" : ""}`}>
-        {!result ? (
-          <p className="empty-hint">Submit a ticket to see results.</p>
-        ) : (
-          <div className="result">
-            {result.injection_detected && (
-              <div className="banner banner--danger">⛔ Injection attempt blocked</div>
-            )}
-            {result.requires_human_review && (
-              <div className="banner banner--warning">🚩 Flagged for human review</div>
-            )}
-
-            {result.redacted_text && result.redacted_text !== result.original_text && (
-              <div className="result-col">
-                <span className="row-label">Redacted Text</span>
-                <p className="redacted-text">{result.redacted_text}</p>
+      <div className="mx-auto max-w-5xl grid grid-cols-1 gap-6 p-6 lg:grid-cols-2">
+        {/* ── Input card ── */}
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-violet-900">New Ticket</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <div>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                Try a preset
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(PRESETS).map(([label, sample]) => (
+                  <Button
+                    key={label}
+                    variant="outline"
+                    size="sm"
+                    className="border-violet-200 text-violet-700 hover:border-violet-300 hover:bg-violet-50"
+                    onClick={() => setText(sample)}
+                  >
+                    {label}
+                  </Button>
+                ))}
               </div>
-            )}
-
-            <Row label="Category" value={result.issue_category} />
-            <Row label="Assigned Team" value={result.assigned_team} />
-
-            <div className="result-row">
-              <span className="row-label">Priority</span>
-              <span className={`badge ${PRIORITY_CLASS[result.priority] ?? "badge-gray"}`}>
-                {result.priority ?? "—"}
-              </span>
             </div>
 
-            <div className="result-row">
-              <span className="row-label">Sentiment</span>
-              <span className={`badge ${SENTIMENT_CLASS[result.user_sentiment] ?? "badge-gray"}`}>
-                {result.user_sentiment ?? "—"}
-              </span>
-            </div>
+            <Textarea
+              placeholder="Describe the issue…"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              className="min-h-[160px] resize-none"
+            />
 
-            {result.confidence_score != null && (
-              <div className="result-col">
-                <div className="row-label-row">
-                  <span className="row-label">Confidence</span>
-                  <span className="confidence-pct">
-                    {Math.round(result.confidence_score * 100)}%
-                  </span>
+            <Button
+              onClick={classify}
+              disabled={loading || !text.trim()}
+              className="h-10 w-full bg-gradient-to-r from-violet-600 to-indigo-600 text-sm font-semibold text-white hover:from-violet-700 hover:to-indigo-700"
+            >
+              {loading ? "Classifying…" : "Classify Ticket"}
+            </Button>
+
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* ── Results card ── */}
+        <Card className="shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-violet-900">Result</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {!result ? (
+              <div className="flex h-48 items-center justify-center">
+                <p className="text-sm text-muted-foreground">
+                  Submit a ticket to see results
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {result.injection_detected && (
+                  <Alert className="border-red-200 bg-red-50">
+                    <AlertDescription className="font-medium text-red-700">
+                      ⛔ Injection attempt blocked
+                    </AlertDescription>
+                  </Alert>
+                )}
+                {result.requires_human_review && (
+                  <Alert className="border-amber-200 bg-amber-50">
+                    <AlertDescription className="font-medium text-amber-700">
+                      🚩 Flagged for human review
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {result.redacted_text && result.redacted_text !== result.original_text && (
+                  <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                      Redacted Text
+                    </p>
+                    <p className="text-sm text-slate-700">{result.redacted_text}</p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-lg border border-violet-100 bg-violet-50 p-3">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-violet-400">
+                      Category
+                    </p>
+                    <p className="text-sm font-semibold text-violet-900">
+                      {result.issue_category ?? "—"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-indigo-100 bg-indigo-50 p-3">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-indigo-400">
+                      Team
+                    </p>
+                    <p className="text-sm font-semibold text-indigo-900">
+                      {result.assigned_team ?? "—"}
+                    </p>
+                  </div>
                 </div>
-                <div className="bar-track">
-                  <div
-                    className="bar-fill"
-                    style={{ width: `${Math.round(result.confidence_score * 100)}%` }}
-                  />
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-lg border border-slate-100 bg-slate-50 p-3">
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                      Priority
+                    </p>
+                    <Badge
+                      variant="outline"
+                      className={PRIORITY_STYLE[result.priority] ?? "border-gray-300 bg-gray-100 text-gray-700"}
+                    >
+                      {result.priority ?? "—"}
+                    </Badge>
+                  </div>
+                  <div className="rounded-lg border border-slate-100 bg-slate-50 p-3">
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                      Sentiment
+                    </p>
+                    <Badge
+                      variant="outline"
+                      className={SENTIMENT_STYLE[result.user_sentiment] ?? "border-gray-300 bg-gray-100 text-gray-700"}
+                    >
+                      {result.user_sentiment ?? "—"}
+                    </Badge>
+                  </div>
                 </div>
+
+                {result.confidence_score != null && (
+                  <div className="rounded-lg border border-slate-100 bg-slate-50 p-3">
+                    <div className="mb-2 flex justify-between">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                        Confidence
+                      </p>
+                      <span className="text-xs font-bold text-violet-700">
+                        {Math.round(result.confidence_score * 100)}%
+                      </span>
+                    </div>
+                    <Progress value={Math.round(result.confidence_score * 100)} />
+                  </div>
+                )}
+
+                {result.reasoning && (
+                  <div className="rounded-lg border border-purple-100 bg-purple-50 p-3">
+                    <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-purple-400">
+                      Reasoning
+                    </p>
+                    <p className="text-sm leading-relaxed text-purple-900">
+                      {result.reasoning}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
-
-            {result.reasoning && (
-              <div className="result-col">
-                <span className="row-label">Reasoning</span>
-                <p className="reasoning">{result.reasoning}</p>
-              </div>
-            )}
-          </div>
-        )}
+          </CardContent>
+        </Card>
       </div>
+
+      {/* ── History ── */}
       {history.length > 0 && (
-        <div className="history">
-          <p className="history-title">Past Classifications</p>
-          {history.map((h) => (
-            <div key={h.id} className="history-row">
-              <span className="history-preview">{h.preview}</span>
-              <span className="history-meta">{h.issue_category ?? "—"}</span>
-              <span className={`badge ${PRIORITY_CLASS[h.priority] ?? "badge-gray"}`}>{h.priority ?? "—"}</span>
-              <span className="history-meta">{h.confidence_score != null ? `${Math.round(h.confidence_score * 100)}%` : "—"}</span>
-            </div>
-          ))}
+        <div className="mx-auto max-w-5xl px-6 pb-8">
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-sm text-violet-900">Past Classifications</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col gap-2">
+                {history.map((h) => (
+                  <div
+                    key={h.id}
+                    className="flex items-center gap-3 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2"
+                  >
+                    <p className="flex-1 truncate text-sm text-slate-700">{h.preview}</p>
+                    <span className="text-xs text-slate-400">{h.issue_category ?? "—"}</span>
+                    <Badge
+                      variant="outline"
+                      className={PRIORITY_STYLE[h.priority] ?? "border-gray-300 bg-gray-100 text-gray-700"}
+                    >
+                      {h.priority ?? "—"}
+                    </Badge>
+                    <span className="tabular-nums text-xs font-medium text-violet-600">
+                      {h.confidence_score != null
+                        ? `${Math.round(h.confidence_score * 100)}%`
+                        : "—"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
-    </div>
-  );
-}
-
-function Row({ label, value }) {
-  return (
-    <div className="result-row">
-      <span className="row-label">{label}</span>
-      <span className="row-value">{value ?? "—"}</span>
     </div>
   );
 }
