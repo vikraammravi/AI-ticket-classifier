@@ -2,6 +2,10 @@
 
 An intelligent support ticket classification system powered by Claude AI and LangGraph. Analyzes customer support tickets to extract structured insights automatically.
 
+## Screenshot
+
+![App Screenshot](docs/screenshot.png)
+
 ## Features
 
 - **Classification** — Detects issue category, priority level, and assigned team
